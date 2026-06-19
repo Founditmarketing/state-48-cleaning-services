@@ -1498,15 +1498,23 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name, email, phone, message }),
                 });
-                const data = await res.json();
+                let data;
+                try {
+                    data = await res.json();
+                } catch (parseErr) {
+                    console.error('Non-JSON response from function:', res.status, res.statusText);
+                    showFormStatus('error', 'Server error (' + res.status + '). Please call us at (602) 562-2040.');
+                    return;
+                }
                 if (res.ok && data.success) {
                     showFormStatus('success', "Message sent! We'll be in touch shortly.");
                     contactForm.reset();
                 } else {
                     showFormStatus('error', data.error || 'Something went wrong. Please call us at (602) 562-2040.');
                 }
-            } catch {
-                showFormStatus('error', 'Unable to send. Please call us at (602) 562-2040.');
+            } catch (err) {
+                console.error('Fetch error:', err);
+                showFormStatus('error', 'Unable to reach the server. Please call us at (602) 562-2040.');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane" aria-hidden="true"></i> <span>Send Message</span>';
