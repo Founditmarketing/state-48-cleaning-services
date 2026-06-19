@@ -67,7 +67,7 @@ module.exports = async function handler(req, res) {
     `;
 
     const { data, error } = await resend.emails.send({
-      from: 'State 48 Cleaning <hello@state48cleaning.com>',
+      from: 'State 48 Cleaning <hello@statecleaning4you.com>',
       to: ['Jason@founditmarketing.com'],
       replyTo: email || undefined,
       subject: `New Contact: ${escapeHtml(name)} — ${service || 'General Inquiry'}`,
