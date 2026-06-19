@@ -1,0 +1,24 @@
+{
+  "name": "state48cleaning-main",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Founditmarketing/state-48-cleaning-services.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Founditmarketing/state-48-cleaning-services/issues"
+  },
+  "homepage": "https://github.com/Founditmarketing/state-48-cleaning-services#readme",
+  "dependencies": {
+    "resend": "^6.14.0"
+  }
+}
