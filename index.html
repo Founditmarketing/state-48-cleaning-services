@@ -799,6 +799,21 @@
             background: rgba(255,255,255,0.1);
         }
         .form-group textarea { resize: vertical; min-height: 110px; }
+        .form-group select {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: var(--radius-sm);
+            color: white; font-family: inherit; font-size: 0.95rem;
+            padding: 12px 14px; outline: none; width: 100%;
+            transition: border-color 0.2s, background 0.2s;
+            cursor: pointer; appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,0.4)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 14px center;
+        }
+        .form-group select:focus {
+            border-color: rgba(245,166,35,0.6); background-color: rgba(255,255,255,0.1);
+        }
+        .form-group select option { background: #1C2D6E; color: white; }
         .form-status {
             display: none; margin-top: 14px; padding: 12px 16px;
             border-radius: var(--radius-sm); font-size: 0.9rem; font-weight: 600;
@@ -1411,13 +1426,27 @@
                             <input type="text" id="cf-name" name="name" required autocomplete="name" placeholder="John Smith">
                         </div>
                         <div class="form-group">
-                            <label for="cf-email">Email Address <span aria-hidden="true" style="color:var(--gold);">*</span></label>
-                            <input type="email" id="cf-email" name="email" required autocomplete="email" placeholder="john@example.com">
+                            <label for="cf-phone">Phone <span aria-hidden="true" style="color:var(--gold);">*</span></label>
+                            <input type="tel" id="cf-phone" name="phone" autocomplete="tel" placeholder="(602) 555-0100">
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="cf-phone">Phone <span class="optional">(optional)</span></label>
-                        <input type="tel" id="cf-phone" name="phone" autocomplete="tel" placeholder="(602) 555-0100">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cf-email">Email <span class="optional">(optional)</span></label>
+                            <input type="email" id="cf-email" name="email" autocomplete="email" placeholder="john@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="cf-service">Service Needed <span class="optional">(optional)</span></label>
+                            <select id="cf-service" name="service">
+                                <option value="">— Select one —</option>
+                                <option>Air Duct Cleaning</option>
+                                <option>Dryer Vent Cleaning</option>
+                                <option>Carpet Cleaning</option>
+                                <option>House Cleaning</option>
+                                <option>Tile &amp; Grout Cleaning</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="cf-message">Message <span aria-hidden="true" style="color:var(--gold);">*</span></label>
@@ -1480,12 +1509,13 @@
         contactForm.addEventListener('submit', async function (e) {
             e.preventDefault();
             const name    = document.getElementById('cf-name').value.trim();
-            const email   = document.getElementById('cf-email').value.trim();
             const phone   = document.getElementById('cf-phone').value.trim();
+            const email   = document.getElementById('cf-email').value.trim();
+            const service = document.getElementById('cf-service').value;
             const message = document.getElementById('cf-message').value.trim();
 
-            if (!name || !email || !message) {
-                showFormStatus('error', 'Please fill in your name, email, and message.');
+            if (!name || (!phone && !email) || !message) {
+                showFormStatus('error', 'Please provide your name, a phone number or email, and a message.');
                 return;
             }
 
@@ -1493,16 +1523,16 @@
             submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> <span>Sending…</span>';
 
             try {
-                const res = await fetch('/.netlify/functions/send-contact', {
+                const res = await fetch('/api/send-email', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email, phone, message }),
+                    body: JSON.stringify({ name, phone, email, service, message }),
                 });
                 let data;
                 try {
                     data = await res.json();
                 } catch (parseErr) {
-                    console.error('Non-JSON response from function:', res.status, res.statusText);
+                    console.error('Non-JSON response:', res.status, res.statusText);
                     showFormStatus('error', 'Server error (' + res.status + '). Please call us at (602) 562-2040.');
                     return;
                 }
