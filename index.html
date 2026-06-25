@@ -16,6 +16,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://d3ey4dbjkt2f6s.cloudfront.net/assets/external/work_request_embed.css" media="screen">
     <style>
         /* ===== DESIGN TOKENS ===== */
         :root {
@@ -1418,46 +1419,10 @@
 
             <!-- Contact Form -->
             <div class="cta-form-wrap animate-on-scroll delay-3">
-                <h3><i class="fa-solid fa-envelope" aria-hidden="true" style="margin-right:8px;color:var(--gold);"></i>Or Send Us a Message</h3>
-                <form id="contact-form" novalidate aria-label="Contact form">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="cf-name">Full Name <span aria-hidden="true" style="color:var(--gold);">*</span></label>
-                            <input type="text" id="cf-name" name="name" required autocomplete="name" placeholder="John Smith">
-                        </div>
-                        <div class="form-group">
-                            <label for="cf-phone">Phone <span aria-hidden="true" style="color:var(--gold);">*</span></label>
-                            <input type="tel" id="cf-phone" name="phone" autocomplete="tel" placeholder="(602) 555-0100">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="cf-email">Email <span class="optional">(optional)</span></label>
-                            <input type="email" id="cf-email" name="email" autocomplete="email" placeholder="john@example.com">
-                        </div>
-                        <div class="form-group">
-                            <label for="cf-service">Service Needed <span class="optional">(optional)</span></label>
-                            <select id="cf-service" name="service">
-                                <option value="">— Select one —</option>
-                                <option>Air Duct Cleaning</option>
-                                <option>Dryer Vent Cleaning</option>
-                                <option>Carpet Cleaning</option>
-                                <option>House Cleaning</option>
-                                <option>Tile &amp; Grout Cleaning</option>
-                                <option>Other</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="cf-message">Message <span aria-hidden="true" style="color:var(--gold);">*</span></label>
-                        <textarea id="cf-message" name="message" required rows="4" placeholder="Tell us about your cleaning needs — home size, service type, best time to reach you..."></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-lg" id="form-submit-btn" style="width:100%;">
-                        <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
-                        <span>Send Message</span>
-                    </button>
-                    <div id="form-status" class="form-status" role="alert" aria-live="polite"></div>
-                </form>
+                <h3><i class="fa-solid fa-envelope" aria-hidden="true" style="margin-right:8px;color:var(--gold);"></i>Request a Quote</h3>
+                <!-- Jobber work request embed -->
+                <div id="fe9c3b49-4ba9-4895-8782-ee14738cc80a-4920503"></div>
+                <script src="https://d3ey4dbjkt2f6s.cloudfront.net/assets/static_link/work_request_embed_snippet.js" clienthub_id="fe9c3b49-4ba9-4895-8782-ee14738cc80a-4920503" form_url="https://clienthub.getjobber.com/client_hubs/fe9c3b49-4ba9-4895-8782-ee14738cc80a/public/work_request/embedded_work_request_form?form_id=4920503"></script>
             </div>
         </div>
     </section>
@@ -1491,65 +1456,6 @@
             });
         }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
         animElements.forEach(el => observer.observe(el));
-
-        // Contact form
-        const contactForm = document.getElementById('contact-form');
-        const formStatus = document.getElementById('form-status');
-        const submitBtn = document.getElementById('form-submit-btn');
-
-        function showFormStatus(type, msg) {
-            formStatus.className = 'form-status form-status--' + type;
-            formStatus.textContent = msg;
-            formStatus.style.display = 'block';
-            if (type === 'success') {
-                setTimeout(() => { formStatus.style.display = 'none'; }, 7000);
-            }
-        }
-
-        contactForm.addEventListener('submit', async function (e) {
-            e.preventDefault();
-            const name    = document.getElementById('cf-name').value.trim();
-            const phone   = document.getElementById('cf-phone').value.trim();
-            const email   = document.getElementById('cf-email').value.trim();
-            const service = document.getElementById('cf-service').value;
-            const message = document.getElementById('cf-message').value.trim();
-
-            if (!name || (!phone && !email) || !message) {
-                showFormStatus('error', 'Please provide your name, a phone number or email, and a message.');
-                return;
-            }
-
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> <span>Sending…</span>';
-
-            try {
-                const res = await fetch('/api/send-email', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, phone, email, service, message }),
-                });
-                let data;
-                try {
-                    data = await res.json();
-                } catch (parseErr) {
-                    console.error('Non-JSON response:', res.status, res.statusText);
-                    showFormStatus('error', 'Server error (' + res.status + '). Please call us at (602) 562-2040.');
-                    return;
-                }
-                if (res.ok && data.success) {
-                    showFormStatus('success', "Message sent! We'll be in touch shortly.");
-                    contactForm.reset();
-                } else {
-                    showFormStatus('error', data.error || 'Something went wrong. Please call us at (602) 562-2040.');
-                }
-            } catch (err) {
-                console.error('Fetch error:', err);
-                showFormStatus('error', 'Unable to reach the server. Please call us at (602) 562-2040.');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane" aria-hidden="true"></i> <span>Send Message</span>';
-            }
-        });
     </script>
 </body>
 </html>
